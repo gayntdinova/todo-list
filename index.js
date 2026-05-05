@@ -38,6 +38,12 @@ class Component {
     this._domNode = this.render();
     return this._domNode;
   }
+
+  update() {
+    const newDomNode = this.render();
+    this._domNode.parentNode.replaceChild(newDomNode, this._domNode);
+    this._domNode = newDomNode;
+  }
 }
 
 class TodoList extends Component {
@@ -62,6 +68,7 @@ class TodoList extends Component {
       this.state.tasks.push({ text: this.state.inputValue });
       this.state.inputValue = "";
     }
+    this.update();
   }
 
   render() {
