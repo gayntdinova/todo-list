@@ -78,6 +78,9 @@ class Task extends Component {
     this.index = index;
     this.onToggle = onToggle;
     this.onDelete = onDelete;
+    this.state = {
+      confirmDelete: false
+    };
   }
 
   render() {
@@ -86,8 +89,15 @@ class Task extends Component {
         "change": () => this.onToggle(this.index)
       }),
       createElement("label", { style: this.task.completed ? "color: gray" : "" }, this.task.text),
-      createElement("button", {}, "🗑️", {
-        "click": () => this.onDelete(this.index)
+      createElement("button", this.state.confirmDelete ? { style: "background: red; color: white" } : {}, "🗑️", {
+        "click": () => {
+          if (!this.state.confirmDelete) {
+            this.state.confirmDelete = true;
+            this.update();
+            return;
+          }
+          this.onDelete(this.index);
+        }
       })
     ]);
   }
