@@ -51,9 +51,9 @@ class TodoList extends Component {
     super();
     this.state = {
       tasks: [
-        { text: "Сделать домашку" },
-        { text: "Сделать практику" },
-        { text: "Пойти домой" },
+        { text: "Сделать домашку", completed: false },
+        { text: "Сделать практику", completed: false },
+        { text: "Пойти домой", completed: false },
       ],
       inputValue: ""
     };
@@ -65,9 +65,20 @@ class TodoList extends Component {
 
   onAddTask() {
     if (this.state.inputValue.trim()) {
-      this.state.tasks.push({ text: this.state.inputValue });
+      this.state.tasks.push({ text: this.state.inputValue, completed: false });
       this.state.inputValue = "";
     }
+    this.update();
+  }
+
+  onCheckTask(index) {
+    const task = this.state.tasks[index];
+    task.completed = !task.completed;
+    this.update();
+  }
+
+  onDeleteTask(index) {
+    this.state.tasks.splice(index, 1);
     this.update();
   }
 
@@ -79,18 +90,23 @@ class TodoList extends Component {
           id: "new-todo",
           type: "text",
           placeholder: "Задание",
+          value: this.state.inputValue
         }, null, {
-          "change": (e) => this.onAddInputChange(e)
+          "input": (e) => this.onAddInputChange(e)
         }),
         createElement("button", { id: "add-btn" }, "+", {
           "click": () => this.onAddTask()
         }),
       ]),
-      createElement("ul", { id: "todos" }, this.state.tasks.map(task =>
+      createElement("ul", { id: "todos" }, this.state.tasks.map((task, i) =>
         createElement("li", {}, [
-          createElement("input", { type: "checkbox" }),
-          createElement("label", {}, task.text),
-          createElement("button", {}, "🗑️")
+          createElement("input", task.completed ? { type: "checkbox", checked: "" } : { type: "checkbox" }, null, {
+            "change": () => this.onCheckTask(i)
+          }),
+          createElement("label", { style: task.completed ? "color: gray" : "" }, task.text),
+          createElement("button", {}, "🗑️", {
+            "click": () => this.onDeleteTask(i)
+          })
         ])
       )),
     ]);
